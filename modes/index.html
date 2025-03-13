@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STOPWATCH</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        :root{
+            --background-color:white;
+            --text-color:black;
+        }
+        .darkmode{
+            --background-color:black;
+            --text-color:white;
+        }
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            width: 100%;
+            align-items: center;
+            height: 100vh;
+            /* margin-left: 400px; */
+            border: 2px solid mediumvioletred;
+            background-color: var(--background-color);
+            box-shadow:0 4px 10px rgb(236, 169, 212) ;
+        }
+        .header{
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .moder {
+            padding: 8px 16px;
+            cursor: pointer;
+            border: none;
+            background-color: var(--text-color);
+            color: var(--background-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .moder:hover {
+            opacity: 0.8;
+        }
+        .wrap{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+        }
+        .content{
+            text-align: center;
+            background-color:rgb(146, 146, 226);
+            /* font-size: 800; */
+            width: 500px;
+            height:500px;
+            margin-top: 50px;
+            /* border: 2px solid hotpink; */
+            border-radius: 50%;
+            box-shadow:0 4px 10px rgb(196, 164, 226);
+        }
+        .time{
+            font-size: 5rem;
+            padding-top: 100px;
+        }
+        button{
+            padding: 15px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            border: none;
+            background-color:mediumorchid;
+            box-shadow: none;
+            border-radius: 5px;
+        }
+        @media  (min-width:300px) and (max-width:768px){
+        .container {
+            padding: 20px;
+        }
+        .header{
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            flex-direction: left;
+        }
+        .toggleMenu{
+            display: block;
+            justify-content: flex-end;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .header .toggleMenu:active{
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            height: 100vh;
+        }
+      
+        .content {
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                align-items: center;
+            }
+        .time{
+                font-size: 2rem;
+            }
+        }
+       
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TRACK YOUR ACTIVENESS</h1>
+        </div> 
+        <div class="wrap">
+        <div class="content">    
+            <!-- <i class="fa-solid fa-pause"></i>     -->
+            <div class="time" id="display">00:00:00</div>
+            <button id="playPauseBtn" class="start" title="Start the timer">
+                <i id="playPauseIcon" class="fa-solid fa-play"></i>
+              </button>
+              <button class="reset" onclick="reset()" title="Reset the timer">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+              </button>
+              <br>
+              <button class="moder" onclick="toggletheme()">Change Mode</button>
+        </div>
+      
+    </div>
+    </div>
+    <script>
+        function toggletheme() {
+            document.documentElement.classList.toggle('darkmode');
+        }
+        let startTime, updatedTime, difference;
+        let interval;
+        let isRunning = false;
+
+        const playPauseBtn = document.getElementById("playPauseBtn");
+        const playPauseIcon = document.getElementById("playPauseIcon");
+
+        playPauseBtn.addEventListener("click", function() {
+            if (isRunning) {
+                stop();
+            } else {
+                start();
+            }
+        });
+
+        function start() {
+            if (!isRunning) {
+                isRunning = true;
+                startTime = new Date().getTime() - (difference || 0);
+                interval = setInterval(updateDisplay, 1000);
+
+                // Change icon to "stop"
+                playPauseIcon.classList.remove("fa-play");
+                playPauseIcon.classList.add("fa-stop");
+            }
+        }
+
+        function stop() {
+            if (isRunning) {
+                clearInterval(interval);
+                isRunning = false;
+
+                // Change icon back to "play"
+                playPauseIcon.classList.remove("fa-stop");
+                playPauseIcon.classList.add("fa-play");
+            }
+        }
+
+        function reset() {
+            clearInterval(interval);
+            isRunning = false;
+            difference = 0;
+            document.getElementById('display').textContent = "00:00:00";
+
+            // Reset icon to "play"
+            playPauseIcon.classList.remove("fa-stop");
+            playPauseIcon.classList.add("fa-play");
+        }
+
+        function updateDisplay() {
+            updatedTime = new Date().getTime();
+            difference = updatedTime - startTime;
+
+            let seconds = Math.floor((difference / 1000) % 60);
+            let minutes = Math.floor((difference / (1000 * 60)) % 60);
+            let hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            hours = (hours < 10) ? "0" + hours : hours;
+
+            document.getElementById('display').textContent = hours + ":" + minutes + ":" + seconds;
+        }
+        </script>
+</body>
+</html>
